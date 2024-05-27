@@ -224,4 +224,4 @@ const getAppointments = asyncHandler(async(req,res)=>{
         .json(new ApiResponse(200,client[0].appointments,"appointments fetched successfully"))
 })
 
-export {registerClient,loginClient,logoutClient,changePassword,updateClientDetails,deleteClient,getAppointments}
+export {registerClient,loginClient,logoutClient,changePassword,updateClientDetails,getAppointments}
