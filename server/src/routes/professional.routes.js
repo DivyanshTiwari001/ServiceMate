@@ -1,7 +1,8 @@
 import {Router} from "express"
-import { changePassword, loginProf, logoutProf, registerProf } from "../controllers/professional.controller.js"
+import { changePassword, getAppointments, loginProf, logoutProf, registerProf, updateProfDetails } from "../controllers/professional.controller.js"
 import { verifyJWTProfessional } from "../middlewares/auth.middleware.js"
 import { upload } from "../middlewares/multer.middleware.js"
+
 
 
 
@@ -18,6 +19,11 @@ router.route("/login").post(loginProf)
 
 router.route("/logout").post(verifyJWTProfessional,logoutProf)
 router.route("/change-password").post(verifyJWTProfessional,changePassword)
+router.route("/update-details").patch(
+    upload.single("profilePhoto"),
+    updateProfDetails
+)
+router.route("/get-appointments").get(verifyJWTProfessional,getAppointments)
 
 
 export default router;
