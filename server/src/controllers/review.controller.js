@@ -3,13 +3,14 @@ import { Review } from "../models/review.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { Client } from "../models/client.model.js"
 import { Professional } from "../models/professional.model.js"
-
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const addReview = asyncHandler(async (req, res) => {
-    const profId = req.params
+    const {profId} = req.params
     const { message, rating } = req.body
 
-    if (!(message || rating)) {
+    if (!(message && rating)) {
         throw new ApiError("invalid request")
     }
 
@@ -42,9 +43,8 @@ const addReview = asyncHandler(async (req, res) => {
         )
 })
 
-
 const deleteReview = asyncHandler(async (req, res) => {
-    const reviewId = req.params
+    const {reviewId} = req.params
     const clientId = req.client?._id
 
     if (!(reviewId && isValidObjectId(reviewId))) {
@@ -64,7 +64,7 @@ const deleteReview = asyncHandler(async (req, res) => {
 })
 
 const updateReview = asyncHandler(async (req, res) => {
-    const reviewId = req.params
+    const {reviewId} = req.params
     const clientId = req.client?._id
 
     const { message, rating } = req.body
@@ -94,12 +94,12 @@ const updateReview = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .json(200, review, "review updated successfully")
+        .json(new ApiResponse(200, review, "review updated successfully"))
 
 })
 
 const getReviews = asyncHandler(async (req, res) => {
-    const profId = req.params;
+    const {profId} = req.params;
 
     if (!(profId && isValidObjectId(profId))) {
         throw new ApiError(400, "id required")
@@ -110,6 +110,7 @@ const getReviews = asyncHandler(async (req, res) => {
             $match: {
                 professional: new mongoose.Types.ObjectId(profId)
             }
+            
         },
         {
             $lookup: {
@@ -128,18 +129,22 @@ const getReviews = asyncHandler(async (req, res) => {
             }
         },
         {
-            $addFields: {
-                $first: "$reviewer"
+            $addFields:{
+                reviewer:{
+                    $first:"$reviewer"
+                }
             }
         }
+        
     ])
 
     if (!reviews) {
         throw new ApiError(400, "cant fetch reviews")
     }
-
     return res
         .status(200)
-        .json(200, reviews, "successfully fetched all reviews")
+        .json(new ApiResponse(200, reviews, "successfully fetched all reviews"))
 
 })
+
+export {addReview,deleteReview,updateReview,getReviews}
