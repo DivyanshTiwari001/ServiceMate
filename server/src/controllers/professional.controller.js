@@ -187,16 +187,18 @@ const getAppointments = asyncHandler(async(req,res)=>{
                             from:"clients",
                             localField:"client",
                             foreignField:"_id",
-                            as:"client_details"
-                        }
-                    },
-                    {
-                        $project:{
-                            fullName:1,
-                            username:1,
-                            profilePhoto:1,
-                            address:1,
-                            phone:1
+                            as:"client_details",
+                            pipeline:[
+                                {
+                                    $project:{
+                                        fullName:1,
+                                        username:1,
+                                        profilePhoto:1,
+                                        address:1,
+                                        phone:1
+                                    }
+                                }
+                            ]
                         }
                     },
                     {

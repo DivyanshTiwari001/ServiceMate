@@ -18,12 +18,13 @@ app.use(cookieParser())
 // routes import 
 import clientRouter from "./routes/client.routes.js";
 import profRouter from "./routes/professional.routes.js";
-import reviewRouter from "./routes/review.routes.js"
-
+import reviewRouter from "./routes/review.routes.js";
+import appointmentRouter from "./routes/appointment.routes.js";
 
 // routes declaration
 app.use("/api/v1/clients",clientRouter)
 app.use("/api/v1/professionals",profRouter)
 app.use("/api/v1/reviews",reviewRouter)
+app.use("/api/v1/appointments",appointmentRouter)
 
 export {app}
