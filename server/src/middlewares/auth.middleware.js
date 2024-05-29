@@ -12,7 +12,7 @@ const verifyJWTClient = asyncHandler(async (req,_,next)=>{
         if(!token){
             throw new ApiError(400,"Unauthorized request")
         }
-
+        
         const decodedToken = await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
         const client = await Client.findById(decodedToken?._id).select("-password")
 

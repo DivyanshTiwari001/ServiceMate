@@ -136,10 +136,11 @@ const updateProfDetails = asyncHandler(async(req,res)=>{
     const prof = await Professional.findById(req.prof?._id)
     const profilePhoto = await uploadOnCloudinary(profilePhotoLocalPath)
 
-    email = email || prof.email
-    address = address || prof.address
-    phone = phone || prof.phone
-    profilePhotoUrl = profilePhoto?.url || prof.profilePhoto
+
+    email = email || prof.email;
+    address = address || prof.address;
+    phone = phone || prof.phone;
+    const profilePhotoUrl = profilePhoto?.url || prof.profilePhoto
 
     const updatedProf = await Professional.findByIdAndUpdate(
         prof._id,
@@ -168,46 +169,46 @@ const updateProfDetails = asyncHandler(async(req,res)=>{
 })
 
 const getAppointments = asyncHandler(async(req,res)=>{
-    const result = await Professional.Aggregate([
-            {
-                $match: {
-                    _id :new mongoose.Types.ObjectId(req.prof?._id)
-                }
-            },
-            {
-                $lookup:{
-                    from:"appointments",
-                    localField:"_id",
-                    foreignField:"professional",
-                    as:"appointments",
-                    pipeline:[
-                        {
-                            $lookup:{
-                                from:"clients",
-                                localField:"client",
-                                foreignField:"_id",
-                                as:"client_details",
-                                pipeline:[
-                                    {
-                                        $project:{
-                                            fullName:1,
-                                            phone:1,
-                                            address:1,
-                                            profilePhoto:1
-                                        }
-
-                                    },
-                                ]
-                            }
-                        },
-                        {
-                            $addFields:{
+    const result = await Professional.aggregate([
+        {
+            $match:{
+                _id:new mongoose.Types.ObjectId(req.prof?._id)
+            }
+        },
+        {
+            $lookup:{
+                from:"appointments",
+                localField:"_id",
+                foreignField:"professional",
+                as:"appointments",
+                pipeline:[
+                    {
+                        $lookup:{
+                            from:"clients",
+                            localField:"client",
+                            foreignField:"_id",
+                            as:"client_details"
+                        }
+                    },
+                    {
+                        $project:{
+                            fullName:1,
+                            username:1,
+                            profilePhoto:1,
+                            address:1,
+                            phone:1
+                        }
+                    },
+                    {
+                        $addFields:{
+                            client_details:{
                                 $first:"$client_details"
                             }
                         }
-                    ]
-                }
+                    }
+                ]
             }
+        },
     ])
 
     if(!result){

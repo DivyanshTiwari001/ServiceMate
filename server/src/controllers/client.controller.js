@@ -54,7 +54,6 @@ const registerClient = asyncHandler(async(req,res)=>{
         .json(new ApiResponse(200,createdUser,"user created successfully"))
 })
 
-
 const loginClient = asyncHandler(async(req,res)=>{
     const {email,username,password} = req.body
 
@@ -121,17 +120,8 @@ const changePassword = asyncHandler(async(req,res)=>{
         throw new ApiError(400,"Unauthorized Request!!")
     }
 
-    const updatedClient = await Client.findByIdAndUpdate(
-        client._id,
-        {$set:{
-            password:newPassword
-        }},
-        {new:true}
-    )
-
-    if(!updatedClient){
-        throw new ApiError(500,"Something Went Wrong")
-    }
+    client.password = newPassword
+    client.save()
 
     return res
     .status(200)
@@ -176,10 +166,10 @@ const updateClientDetails = asyncHandler(async(req,res)=>{
 })
 
 const getAppointments = asyncHandler(async(req,res)=>{
-        const client = await Client.Aggregate([
+        const client = await Client.aggregate([
             {
                 $match:{
-                    _id: new mongoose.Types.ObjectId(req.client._id)
+                    _id:new mongoose.Types.ObjectId(req.client?._id)
                 }
             },
             {
@@ -194,22 +184,21 @@ const getAppointments = asyncHandler(async(req,res)=>{
                                 from:"professionals",
                                 localField:"professional",
                                 foreignField:"_id",
-                                as:"professional_details",
-                                pipeline:[
-                                    {
-                                        $project:{
-                                            fullName:1,
-                                            username:1,
-                                            profilePhoto:1,
-                                            phone:1
-                                        }
-                                    }
-                                ]
+                                as:"professional_details"
+                            }
+                        },
+                        {
+                            $project:{
+                                fullName:1,
+                                username:1,
+                                address:1,
+                                phone:1,
+                                profilePhoto:1
                             }
                         },
                         {
                             $addFields:{
-                                professoinal_details:{
+                                professional_details:{
                                     $first:"$professional_details"
                                 }
                             }

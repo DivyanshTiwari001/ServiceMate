@@ -15,6 +15,7 @@ router.route("/login").post(loginProf)
 router.route("/logout").post(verifyJWTProfessional, logoutProf)
 router.route("/change-password").post(verifyJWTProfessional, changePassword)
 router.route("/update-details").patch(
+    verifyJWTProfessional,
     upload.single("profilePhoto"),
     updateProfDetails
 )
