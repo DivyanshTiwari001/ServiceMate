@@ -54,7 +54,7 @@ const professionalSchema = new Schema(
         },
         field:{
             type:String,
-            enum:['plumber','electrician','carpainter','painter','househelp']
+            enum:['plumber','electrician','carpenter','painter','househelp']
         }
     },
     {
