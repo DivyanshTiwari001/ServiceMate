@@ -19,7 +19,22 @@ import {
 import Rating from '../Rating/Rating';
 import { getClientInfo } from '../../../../utils/client.utils';
 
+
 function Home() {
+  const {user,setUser} = useContext(UserContext)
+  useEffect(()=>{
+    const fetchUser = async()=>{
+      try{
+        if(!user){
+        const res  = await getClientInfo();
+        setUser(res.data)
+      }
+      }catch(error){
+        console.error(error)
+      }
+    }
+    fetchUser();
+  },[])
   
   const services = {
     plumber: {
@@ -129,6 +144,7 @@ function Home() {
                               {item.username}
                             </p>
                             <table className='w-3/4 font-serif mt-0'>
+                            <tbody>
                               <tr className='w-full flex flex-row'>
                                 <td className='w-1/4  text-start text-xl'>Phone </td>
                                 <td className='w-1/2 text-start text-xl'>{' : ' + item.phone}</td>
@@ -145,6 +161,7 @@ function Home() {
                                 <td className='w-1/4  text-start text-xl'>Rating </td>
                                 <td className='w-1/2 text-start text-xl flex flex-row'>{' : '}<Rating rating={item.rating} cssprop='mt-1 ml-1'/></td>
                               </tr>
+                              </tbody>
                             </table>
                             
                           </div>

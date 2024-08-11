@@ -8,13 +8,13 @@ function Rating({rating,cssprop}) {
     arr.fill(1,0,rating);
   return (
     <div className={"flex flex-row text-yellow-300 " + cssprop}>
-        {arr.map((i)=>
+        {arr.map((i,index)=>
             {
                 return (
                     (i==1)? 
-                    <FaStar/>
+                    <FaStar key={index}/>
                     :
-                    <CiStar/>
+                    <CiStar key={index}/>
                 ) 
 
             }

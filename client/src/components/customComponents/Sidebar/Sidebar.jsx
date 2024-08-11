@@ -33,8 +33,8 @@ function Sidebar({ user }) {
             <SheetContent className="p-0">
                 {/* userinfo */}
                 <div className="flex flex-row w-full h-fit border-y-2 shadow-sm cursor-pointer">
-                    <div className="w-1/3 p-1">
-                        <img src={user?.profilePhoto || "https://github.com/shadcn.png"} alt="profile photo" className="rounded-full w-40" />
+                    <div className="w-1/3 p-1 flex flex-row justify-center">
+                        <img src={user?.profilePhoto || "https://github.com/shadcn.png"} alt="profile photo" className="w-24 h-24 rounded-full" />
                     </div>
                     <div className="w-2/3 font-serif flex flex-col justify-center pl-3" >
                         <ul>

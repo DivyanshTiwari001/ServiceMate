@@ -1,3 +1,4 @@
+import axios from "axios";
 const baseUrl = "http://localhost:8000/api/v1/clients"
 
 const signupClient = async({username,fullName,email,password,phone,address,profilePhoto})=>{
@@ -16,12 +17,9 @@ const signupClient = async({username,fullName,email,password,phone,address,profi
 
   const url = baseUrl + '/register'
 
-  const res = await fetch(url,{
-    method:'POST',
-    body:form
-  })
+  const res = await axios.post(url,form,{withCredentials:true})
 
-  return await res.json();
+  return res.data;
 }
 
 const loginClient = async(password,username="",email="",)=>{
@@ -37,27 +35,14 @@ const loginClient = async(password,username="",email="",)=>{
   
   const data = username ? {username,password} : {email,password}
 
-  const res = await fetch(url,
-    {
-      method:'POST',
-      headers:{
-        "Content-Type": "application/json",
-      },
-      body:JSON.stringify(data)
-    }
-  )
-  return await res.json()
+  const res = await axios.post(url,data,{withCredentials:true})
+  return res.data;
 }
 
 const getClientInfo = async()=>{
   const url = baseUrl + '/get-client'
-  const res = await fetch(url,
-    {
-      method:'GET',
-      withCredentials:true
-    }
-  )
-  return await res.json();
+  const res = await axios.get(url,{withCredentials:true})
+  return res.data;
 }
 
 const updateClientDetails = async()=>{

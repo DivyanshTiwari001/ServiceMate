@@ -44,6 +44,7 @@ function Login() {
         response = await loginProf(data.password,data.username); 
       }
       else response = await loginClient(data.password,data.username);
+      console.log(response)
       if(response?.statusCode==200){
         setUser(response.data);
         navigate('/');

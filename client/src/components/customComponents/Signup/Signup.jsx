@@ -51,9 +51,6 @@ function Signup() {
   const navigate  = useNavigate();
   const form = useForm({
     resolver:zodResolver(registrationFormSchema),
-    defaultValues:{
-      profilePhoto:null
-    }
   });
   
   const submitHandler = async(data)=>{
