@@ -4,6 +4,9 @@ import Home from "./Home/Home";
 import Dashboard from "./Dashboard/Dashboard";
 import Signup from './Signup/Signup';
 import Login from "./Login/Login";
+import Appointment from "./Appointment/Appointment";
+import AppointmentForm from "./Appointment/AppointmentForm";
+import ProfessionalPage from "./Professionals/ProfessionalPage";
 
 export {
     Header,
@@ -11,5 +14,8 @@ export {
     Home,
     Dashboard,
     Login,
-    Signup
+    Signup,
+    Appointment,
+    AppointmentForm,
+    ProfessionalPage,
 }

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 
 function Header() {
   const [searchText,setSearchText] = useState('')
-  const {user} = useContext(UserContext)
+  const {user,setUser} = useContext(UserContext)
 
   const handleChangeSearchText = (e)=>{
     setSearchText(e.target.value)
@@ -46,7 +46,7 @@ function Header() {
         <div className="w-1/4 h-full flex flex-row">
           {/* avatar or login button */}
             {(user)?
-              <Sidebar user={user}/>
+              <Sidebar user={user} setUser={setUser}/>
             :
             <div className='w-full h-full flex flex-row items-center justify-center gap-x-2 p-2 '>
               <Link to="/login">

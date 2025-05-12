@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import { RouterProvider,createBrowserRouter } from 'react-router-dom';
 import Layout from './Layout';
-import {Home,Dashboard,Login,Signup} from "./components/customComponents"
-
+import {Home,Dashboard,Login,Signup,Appointment, AppointmentForm, ProfessionalPage} from "./components/customComponents"
 
 const router = createBrowserRouter([
   {
@@ -26,6 +25,18 @@ const router = createBrowserRouter([
       {
         path:"/signup",
         element:<Signup/>
+      },
+      {
+        path:"/appointment",
+        element:<Appointment/>
+      },
+      {
+        path:'/appointment-form',
+        element:<AppointmentForm/>
+      },
+      {
+        path:'/list-prof',
+        element:<ProfessionalPage/>
       }
     ]
   }

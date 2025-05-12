@@ -10,10 +10,9 @@ import { Client } from "../models/client.model.js";
 // create Appointment
 
 const createAppointment = asyncHandler(async(req,res)=>{
-    const {date,issue} = req.body;
-    const {profId} = req.params;
+    const {date,issue,profId} = req.body;
     const clientId = req.client?._id;
-
+    
     if(!date){
         throw new ApiError(400,"invalid appointment")
     }
@@ -70,6 +69,11 @@ const createAppointment = asyncHandler(async(req,res)=>{
                 professional_details:{
                     $first:"$professional_details"
                 }
+            }
+        },
+        {
+            $project:{
+                isDeleted:0
             }
         }
     ])
@@ -133,6 +137,11 @@ const updateAppointmentStatus = asyncHandler(async(req,res)=>{
                     $first:"$client_details"
                 }
             }
+        },
+        {
+            $project:{
+                isDeleted:0
+            }
         }
     ])
 
@@ -146,7 +155,7 @@ const updateAppointmentStatus = asyncHandler(async(req,res)=>{
 })
 
 const cancelAppointment = asyncHandler(async(req,res)=>{
-    const {appointmentId} = req.params
+    const {appointmentId} = req.body
 
     if(!(appointmentId && isValidObjectId(appointmentId))){
         throw new ApiError(400,"invalid request to cancel appointment")
@@ -191,12 +200,19 @@ const cancelAppointment = asyncHandler(async(req,res)=>{
                     $first:"$professional_details"
                 }
             }
+        },
+        {
+            $project:{
+                isDeleted:0
+            }
         }
     ])
     return res
     .status(200)
     .json(new ApiResponse(200,appointmentDoc[0],"appointment cancelled successfully"))
 })
+
+
 
 
 

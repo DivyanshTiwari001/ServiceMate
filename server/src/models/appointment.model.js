@@ -22,6 +22,16 @@ const appointmentSchema = new Schema(
             type:String,
             enum:["accepted","rejected","pending","completed","cancelled"],
             default:"pending"
+        },
+        isDeleted:{
+            client:{
+                type:Boolean,
+                default:false
+            },
+            prof:{
+                type:Boolean,
+                default:false
+            }
         }
     },
     {timestamps:true}

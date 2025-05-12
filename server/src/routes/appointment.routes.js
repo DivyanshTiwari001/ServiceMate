@@ -5,9 +5,9 @@ import { cancelAppointment, createAppointment, updateAppointmentStatus } from ".
 
 const router = Router()
 
-router.route('/create-appointment/p/:profId').post(verifyJWTClient,createAppointment);
+router.route('/create-appointment').post(verifyJWTClient,createAppointment);
 router.route('/update-appointment/a/:appointmentId').patch(verifyJWTProfessional,updateAppointmentStatus);
-router.route('/cancel-appointment/a/:appointmentId').patch(verifyJWTClient,cancelAppointment);
+router.route('/cancel-appointment').patch(verifyJWTClient,cancelAppointment);
 
 
 export default router;

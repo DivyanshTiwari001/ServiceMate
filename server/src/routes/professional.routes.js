@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { changePassword, getAllProfessional, getAppointments, loginProf, logoutProf, registerProf, updateProfDetails } from "../controllers/professional.controller.js"
+import { changePassword, deleteAppointment, getAllProfessional, getAppointments, getProfessionalInfo, loginProf, logoutProf, registerProf, updateProfDetails } from "../controllers/professional.controller.js"
 import { verifyJWTClient, verifyJWTProfessional } from "../middlewares/auth.middleware.js"
 import { upload } from "../middlewares/multer.middleware.js"
 
@@ -20,6 +20,8 @@ router.route("/update-details").patch(
     updateProfDetails
 )
 router.route("/get-appointments").get(verifyJWTProfessional, getAppointments)
-router.route("/get-all-professionals").get(verifyJWTClient,getAllProfessional)
+router.route("/delete-appointment").delete(verifyJWTProfessional,deleteAppointment)
+router.route("/get-all-professionals").get(getAllProfessional)
+router.route("/get-professional").get(verifyJWTProfessional,getProfessionalInfo)
 
 export default router;

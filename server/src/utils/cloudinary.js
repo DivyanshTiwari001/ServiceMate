@@ -31,7 +31,7 @@ const removeFromCloudinary = async(fileUrl)=>{
     try{
         if(!fileUrl)return null;
         const publicId = fileUrl.substring(fileUrl.lastIndexOf('/')+1,fileUrl.lastIndexOf('.'));
-        await cloudinary.uploader.destroy(publicId);
+        await cloudinary.uploader.destroy(publicId); 
     }catch(err){
         return null;
     }

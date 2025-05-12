@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Sheet,
     SheetContent,
@@ -16,8 +16,16 @@ import {
 
   
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { logoutClient } from "../../../../utils/client.utils";
+import { useNavigate } from "react-router-dom";
 
-function Sidebar({ user }) {
+function Sidebar({ user ,setUser}) {
+    const navigate = useNavigate()
+    const handleLogout = async()=>{
+        if(!user.isProf)await logoutClient()
+        setUser(prev=>null)
+        navigate("/")
+    }
     return (
         <div className="w-full h-full flex flex-row">
         <Sheet>
@@ -59,6 +67,10 @@ function Sidebar({ user }) {
                             </HoverCard>
                         </ul>
                     </div>
+                </div>
+                {/* User Links */}
+                <div className="flex flex-col justify-center items-center">
+                    <div className="w-full font-serif text-xl pl-3 hover:bg-rose-400 hover:text-white cursor-pointer" onClick={handleLogout}>Logout</div>
                 </div>
             </SheetContent>
         </Sheet>

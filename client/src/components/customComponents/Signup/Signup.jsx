@@ -40,27 +40,27 @@ const registrationFormSchema = z.object({
     required_error:"Phone number is required"
   }).min(10).max(10),
   address:z.string(),
-  profilePhoto: z.any().optional(),
   field:z.string().optional(),
-  experience:z.number().int().gte(0).optional()
+  experience:z.coerce.number().int().gte(0).optional()
 })
 
 function Signup() {
   const [isprof,setIsProf] = useState(false);
   const {setUser}  = useContext(UserContext);
+  const [profilePhoto,setProfilePhoto] = useState(null);
   const navigate  = useNavigate();
   const form = useForm({
     resolver:zodResolver(registrationFormSchema),
   });
   
   const submitHandler = async(data)=>{
-    console.log(data);
     try{
       let response;
-      if(!isprof)response = await signupClient(data);
-      else response = await signupProf(data);
+      if(!isprof)response = await signupClient(data,profilePhoto);
+      else response = await signupProf(data,profilePhoto);
       if(response.statusCode==200){
-        setUser(response.data);
+        const data = {...response.data,isprof}
+        setUser(data)
         navigate('/');
       }
       else throw new Error();
@@ -75,6 +75,10 @@ function Signup() {
       <div className='w-full  font-serif h-screen flex flex-col justify-center items-center'>
         <form className='border-2 shadow-md h-fit w-1/2 lg:w-1/3 space-y-3 flex flex-col justify-center items-center p-4' onSubmit={form.handleSubmit(submitHandler)}>
           <div className='text-4xl mb-1 mt-1'>SignUp</div>
+                <label htmlFor="profile-photo">
+                  <img src={profilePhoto ? URL.createObjectURL(profilePhoto) : "https://github.com/shadcn.png"} alt="profile" className='w-20 h-20 rounded-full' />
+                </label>
+                <Input type="file" id='profile-photo' onChange={(e)=>{setProfilePhoto(prev=>e.target.files[0])}} className='hidden'/>
                 <FormField
                   control={form.control}
                   name="username"
@@ -147,21 +151,6 @@ function Signup() {
                   </FormItem>
                 )}
                 />
-                <FormField
-                  control={form.control}
-                  name="profilePhoto"
-                  render={({ field }) => (
-                    <FormItem className={itemStyle}>
-                    <FormLabel>Profile Photo:</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Profile Photo" type="file" {...field}
-                       className={inputStyle}
-                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-                />
                 {(isprof)?
                   <>
                 <FormField
@@ -182,7 +171,7 @@ function Signup() {
                   render={({ field }) => (
                     <FormItem className={itemStyle}>
                     <FormControl>
-                      <Input placeholder="experience" {...field} className={inputStyle}/>
+                      <Input placeholder="experience" {...field} type="number" className={inputStyle}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

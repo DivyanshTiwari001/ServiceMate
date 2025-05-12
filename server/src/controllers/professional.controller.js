@@ -4,12 +4,13 @@
 // updateProfDetails
 // getAppointments
 
-import mongoose from "mongoose";
+import mongoose,{isValidObjectId} from "mongoose";
 import {asyncHandler} from "../utils/asyncHandler.js"
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Professional } from "../models/professional.model.js";
+import { Appointment } from "../models/appointment.model.js";
 
 
 const registerProf = asyncHandler(async(req,res)=>{
@@ -169,11 +170,25 @@ const updateProfDetails = asyncHandler(async(req,res)=>{
 })
 
 const getAppointments = asyncHandler(async(req,res)=>{
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page-1)*limit;
+    const statusKey = req.query.status || 0;
+
+    const statusList = ["accepted","rejected","pending","completed","cancelled"]
+    const status = statusList[statusKey]
+    
     const result = await Professional.aggregate([
         {
             $match:{
                 _id:new mongoose.Types.ObjectId(req.prof?._id)
             }
+        },
+        {
+            $limit:limit
+        },
+        {
+            $skip:skip
         },
         {
             $lookup:{
@@ -182,6 +197,11 @@ const getAppointments = asyncHandler(async(req,res)=>{
                 foreignField:"professional",
                 as:"appointments",
                 pipeline:[
+                    {
+                        $match:{
+                            status
+                        }
+                    },
                     {
                         $lookup:{
                             from:"clients",
@@ -209,18 +229,42 @@ const getAppointments = asyncHandler(async(req,res)=>{
                         }
                     }
                 ]
-            }
+            },
         },
     ])
 
     if(!result){
         throw new ApiError(400,"Unable to fetch request at this moment")
     }
+    console.log(result[0].appointments)
     return res
     .status(200)
     .json(
         new ApiResponse(200,result[0].appointments,"appointments fetched successfully")
     )
+})
+
+const deleteAppointment = asyncHandler(async(req,res)=>{
+    const {appointmentId} = req.query;
+
+    if(!(appointmentId && isValidObjectId(appointmentId))){
+        throw new ApiError(400,"invalid request to cancel appointment")
+    }
+
+    const appointment = await Appointment.findOne({_id:appointmentId})
+
+    if(!appointment){
+        throw new ApiError(404,"appointment not found")
+    }
+
+    appointment.isDeleted.prof = true;
+
+    await appointment.save()
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200,{},"appointment deleted successfully"));
+    
 })
 
 const getProfessionalInfo = asyncHandler(async(req,res)=>{
@@ -234,22 +278,40 @@ const getProfessionalInfo = asyncHandler(async(req,res)=>{
         throw new ApiError(404,'user not found')
     }
 
+    const modified_prof = {...prof._doc,isprof:true}
+
     return res
     .status(200)
     .json(
-        new ApiResponse(200,prof,"user found successfully")
+        new ApiResponse(200,modified_prof,"user found successfully")
     )
 })
 
 const getAllProfessional = asyncHandler(async(req,res)=>{
-
-    const result = await Professional.aggregate([
+    const limit = parseInt(req.query.limit,10) || 3;
+    const page = parseInt(req.query.page,10) || 1;
+    const skip = (page-1)*limit;
+    const fieldNumber = (req.query.field)?parseInt(req.query.field,10):-1;
+    const fields = ['plumber','electrician','carpenter','painter','househelp'];
+    const pipeline = [];
+    if(fieldNumber>=0 && fieldNumber<=fields.length){
+       pipeline.push({
+        $match:{
+            field: fields[fieldNumber]
+        }
+    });
+    }
+    pipeline.push(
+        {$limit:limit},
+        {$skip : skip},
         {
             $project:{
                 password:0
             }
         }
-    ])
+    )
+
+    const result = await Professional.aggregate(pipeline);
 
     return res
     .status(200)
@@ -257,4 +319,4 @@ const getAllProfessional = asyncHandler(async(req,res)=>{
 
 }) 
 
-export {registerProf,loginProf,logoutProf,changePassword,updateProfDetails,getAppointments,getProfessionalInfo,getAllProfessional}
+export {registerProf,loginProf,logoutProf,changePassword,updateProfDetails,getAppointments,deleteAppointment,getProfessionalInfo,getAllProfessional}
