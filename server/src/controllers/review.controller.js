@@ -6,6 +6,18 @@ import { Professional } from "../models/professional.model.js"
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+const getRatings = async(profId)=>{
+    const reviews = await Review.find({professional:profId});
+
+    const sum = reviews.reduce((acc,review)=>{
+        acc += review.rating
+        return acc
+    },0)
+
+    return Math.ceil(sum/reviews.length)
+}
+
+
 const addReview = asyncHandler(async (req, res) => {
     const {profId} = req.params
     const { message, rating } = req.body
@@ -35,6 +47,10 @@ const addReview = asyncHandler(async (req, res) => {
     )
 
     const reviewDoc = await Review.findById(review?._id)
+
+    const prof_rating = await getRatings(prof._id);
+    prof.rating = prof_rating
+    prof.save();
 
     return res
         .status(200)
@@ -92,6 +108,10 @@ const updateReview = asyncHandler(async (req, res) => {
         throw new ApiError(400, "implementations of changes failed")
     }
 
+    const prof_rating = await getRatings(review.professional);
+    prof.rating = prof_rating
+    prof.save();
+
     return res
         .status(200)
         .json(new ApiResponse(200, review, "review updated successfully"))
@@ -147,4 +167,4 @@ const getReviews = asyncHandler(async (req, res) => {
 
 })
 
-export {addReview,deleteReview,updateReview,getReviews}
+export {addReview,deleteReview,updateReview,getReviews,getRatings}

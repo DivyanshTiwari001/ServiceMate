@@ -37,6 +37,7 @@ function ClientHome(){
     const fetchProfessionals = async()=>{
         const res = await getProfessionals(1);
         setProfessionals(res.data)
+        console.log(res.data)
     }
 
     useEffect(()=>{

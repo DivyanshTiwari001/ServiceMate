@@ -42,6 +42,10 @@ const professionalSchema = new Schema(
         profilePhoto: {
             type: String,//cloudinary url
         },
+        rating:{
+            type:Number, //to be updated by server
+            default:0
+        },
         experience:{
             type:Number,
             default:0,
