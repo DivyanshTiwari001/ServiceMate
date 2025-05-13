@@ -230,7 +230,8 @@ const getAllProfessional = asyncHandler(async(req,res)=>{
                 address:1,
                 profilePhoto:1,
                 field:1,
-                experience:1
+                experience:1,
+                rating:1
             }
         }
     )
