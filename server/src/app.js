@@ -21,10 +21,11 @@ import profRouter from "./routes/professional.routes.js";
 import reviewRouter from "./routes/review.routes.js";
 import appointmentRouter from "./routes/appointment.routes.js";
 
+
 // routes declaration
-app.use("/api/v1/clients",clientRouter)
-app.use("/api/v1/professionals",profRouter)
-app.use("/api/v1/reviews",reviewRouter)
-app.use("/api/v1/appointments",appointmentRouter)
+app.use("/api/v1/client",clientRouter)
+app.use("/api/v1/professional",profRouter)
+app.use("/api/v1/review",reviewRouter)
+app.use("/api/v1/appointment",appointmentRouter)
 
 export {app}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = "http://localhost:8000/api/v1/professionals"
+const baseUrl = "http://localhost:8000/api/v1/professional"
 
 
 const signupProf = async({username,fullName,email,password,phone,address,field,experience},profilePhoto)=>{
@@ -16,7 +16,7 @@ const signupProf = async({username,fullName,email,password,phone,address,field,e
   form.append('field',field);
   form.append('experience',experience);
 
-  const url = baseUrl + '/register'
+  const url = baseUrl
 
   const res = await axios.post(url,form,{withCredentials:true})
 
@@ -44,20 +44,20 @@ const loginProf = async(password,username="",email="",)=>{
   }
 
   const getProfessionals = async(page,limit=10,field=-1)=>{
-    const url  = baseUrl + '/get-all-professionals'
+    const url  = baseUrl
     const res = await axios(url,{params:{page,limit,field},withCredentials:true})
     return res.data;
   }
 
   const getProfInfo = async()=>{
-    const url = baseUrl + '/get-professional'
+    const url = baseUrl + '/self'
     const res = await axios.get(url,{withCredentials:true})
     return res.data;
 
   }
 
   const getAppointments = async(page=1,limit=10,status=0)=>{
-      const url  = baseUrl + '/get-appointments'
+      const url  ="http://localhost:8000/api/v1/appointment"
       const res = await axios.get(url,{params:{page,limit,status},withCredentials:true})
       console.log(res)
       return res.data;

@@ -144,8 +144,8 @@ return (
                               <table className='w-3/4 font-sans mt-0'>
                               <tbody>
                                 <tr className='w-full flex flex-row'>
-                                  <td className='w-1/4  text-start text-xl'>Phone </td>
-                                  <td className='w-1/2 text-start text-xl ml-1'>{' : ' + item.phone}</td>
+                                  <td className='w-1/4  text-start text-xl'>Name </td>
+                                  <td className='w-1/2 text-start text-xl ml-1'>{' : ' + item.fullName}</td>
                                 </tr>
                                 <tr className='w-full flex flex-row'>
                                   <td className='w-1/4  text-start text-xl'>Field </td>

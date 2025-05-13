@@ -1,26 +1,24 @@
 import {Router} from "express"
-import { changePassword, deleteAppointment, getAppointments, getClientInfo, loginClient, logoutClient, registerClient, updateClientDetails } from "../controllers/client.controller.js";
+import { changePassword,one, self, loginClient, logoutClient, registerClient, updateClientDetails } from "../controllers/client.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
-import {verifyJWTClient} from "../middlewares/auth.middleware.js"
+import {verifyJWTClient, verifyJWTUser} from "../middlewares/auth.middleware.js"
 
 
 const router = Router();
 
 
-router.route("/register").post(
+router.route("").post(
     upload.single("profilePhoto"),
     registerClient
 )
 router.route("/login").post(loginClient)
-
-
-router.route("/logout").get(verifyJWTClient,logoutClient)
-router.route('/change-password').post(verifyJWTClient,changePassword)
-router.route('/update-details').patch(verifyJWTClient,
+router.route("/logout").post(verifyJWTClient,logoutClient)
+router.route('/:id/password').post(verifyJWTClient,changePassword)
+router.route('/:id').patch(verifyJWTClient,
     upload.single("profilePhoto")
     ,updateClientDetails)
-router.route('/get-appointments').get(verifyJWTClient,getAppointments)
-router.route('/get-client').get(verifyJWTClient,getClientInfo)
-router.route('/delete-appointment').delete(verifyJWTClient,deleteAppointment)
+
+router.route('/self').get(verifyJWTClient,self)
+router.route('/:id').get(verifyJWTUser,one)
 
 export default router;

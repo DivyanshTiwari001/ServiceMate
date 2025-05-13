@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseUrl = "http://localhost:8000/api/v1/appointments"
+const baseUrl = "http://localhost:8000/api/v1/appointment"
 
 const bookAppointment = async({appointmentDate,appointmentTime,issue,profId})=>{
     try{
@@ -21,7 +21,7 @@ const bookAppointment = async({appointmentDate,appointmentTime,issue,profId})=>{
 
         // creating date object from date and time provided by user
         const date = new Date(Date.UTC(year,month-1, day, hour, min)).toISOString();
-        const url = baseUrl + '/create-appointment'
+        const url = baseUrl
         const res = await axios.post(url,{date,issue,profId},{withCredentials:true})
         return res.data;
   
@@ -31,8 +31,8 @@ const bookAppointment = async({appointmentDate,appointmentTime,issue,profId})=>{
   }
 
   const cancelAppointment = async(appointmentId)=>{
-      const url = baseUrl + '/cancel-appointment';
-      const res = await axios.patch(url,{appointmentId},{withCredentials:true});
+      const url = baseUrl + `/${appointmentId}/cancel`;
+      const res = await axios.patch(url,{},{withCredentials:true});
       return res.data;
   }
 

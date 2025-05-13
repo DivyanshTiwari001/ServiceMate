@@ -100,15 +100,15 @@ function Appointment() {
                             <div className='w-full flex flex-row justify-center mt-1 border-b-2 shadow-md shadow-rose-dark'>
                               {/* professional_details */}
                               <div className='w-1/3'>
-                                <img src={item.professional_details.profilePhoto} alt="" className='w-20 h-20 rounded-full border-2 border-gray-600 shadow-md shadow-rose-dark' />
+                                <img src={item.professional.profilePhoto} alt="" className='w-20 h-20 rounded-full border-2 border-gray-600 shadow-md shadow-rose-dark' />
                               </div>
                               <div className='w-1/3'>
                                 <table>
                                   <tbody>
-                                    <tr className='font-bold font-serif text-xl'><td>{item.professional_details.username}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.fullName}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.phone}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.field}</td></tr>
+                                    <tr className='font-bold font-serif text-xl'><td>{item.professional.username}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.fullName}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.phone}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.field}</td></tr>
                                   </tbody>
                                 </table>
                               </div>
@@ -183,15 +183,15 @@ function Appointment() {
                             <div className='w-full flex flex-row justify-center mt-1 border-b-2 shadow-md shadow-rose-dark'>
                               {/* professional_details */}
                               <div className='w-1/3'>
-                                <img src={item.professional_details.profilePhoto} alt="" className='w-20 h-20 rounded-full border-2 border-gray-600 shadow-md shadow-rose-dark' />
+                                <img src={item.professional.profilePhoto} alt="" className='w-20 h-20 rounded-full border-2 border-gray-600 shadow-md shadow-rose-dark' />
                               </div>
                               <div className='w-1/3'>
                               <table>
                                   <tbody>
-                                    <tr className='font-bold font-serif text-xl'><td>{item.professional_details.username}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.fullName}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.phone}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.field}</td></tr>
+                                    <tr className='font-bold font-serif text-xl'><td>{item.professional.username}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.fullName}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.phone}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.field}</td></tr>
                                   </tbody>
                                 </table>
                               </div>
@@ -266,15 +266,15 @@ function Appointment() {
                             <div className='w-full flex flex-row justify-center mt-1 border-b-2 shadow-md shadow-rose-dark'>
                               {/* professional_details */}
                               <div className='w-1/3'>
-                                <img src={item.professional_details.profilePhoto} alt="" className='w-20 h-20 rounded-full border-2 border-gray-600 shadow-md shadow-rose-dark' />
+                                <img src={item.professional.profilePhoto} alt="" className='w-20 h-20 rounded-full border-2 border-gray-600 shadow-md shadow-rose-dark' />
                               </div>
                               <div className='w-1/3'>
                               <table>
                                   <tbody>
-                                    <tr className='font-bold font-serif text-xl'><td>{item.professional_details.username}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.fullName}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.phone}</td></tr>
-                                    <tr className='font-bold font-serif'><td>{item.professional_details.field}</td></tr>
+                                    <tr className='font-bold font-serif text-xl'><td>{item.professional.username}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.fullName}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.phone}</td></tr>
+                                    <tr className='font-bold font-serif'><td>{item.professional.field}</td></tr>
                                   </tbody>
                                 </table>
                               </div>

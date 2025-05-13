@@ -40,64 +40,27 @@ const createAppointment = asyncHandler(async(req,res)=>{
     if(!appointment){
         throw new ApiError(500,"not able to book appointment")
     }
-    const appointmentDoc = await Appointment.aggregate([
-        {
-            $match:{
-                _id:new mongoose.Types.ObjectId(appointment?._id)
-            }
-        },
-        {
-            $lookup:{
-                from:"professionals",
-                localField:"professional",
-                foreignField:"_id",
-                as:"professional_details",
-                pipeline:[
-                    {
-                        $project:{
-                            fullName:1,
-                            username:1,
-                            phone:1,
-                            profilePhoto:1
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            $addFields:{
-                professional_details:{
-                    $first:"$professional_details"
-                }
-            }
-        },
-        {
-            $project:{
-                isDeleted:0
-            }
-        }
-    ])
 
-    if(!appointmentDoc){
-        throw new ApiError(500,"something went wrong")
-    }
+    const appointmentobj =  await Appointment.findById(appointment._id)
+    .populate({path:'professional',select:'fullName username email phone address profilePhoto'})
+    .select("-isDeleted -updatedAt -createdAt")
 
     return res
     .status(200)
-    .json(new ApiResponse(200,appointmentDoc[0],"appointment created successfully"))
+    .json(new ApiResponse(200,appointmentobj,"appointment created successfully"))
 })
 
 
 // update Appointment status
 const updateAppointmentStatus = asyncHandler(async(req,res)=>{
     const {status} = req.body
-    const {appointmentId} = req.params
+    const {id} = req.params
 
-    if(!status || !(appointmentId && isValidObjectId(appointmentId))){
+    if(!status || !(id && isValidObjectId(id))){
         throw new ApiError(400,"invalid request to update appointment")
     }
 
-    const appointment = await Appointment.findOne({_id:appointmentId})
+    const appointment = await Appointment.findOne({_id:id})
     
     if(!appointment){
         throw new ApiError(404,"appointment not found")
@@ -105,63 +68,28 @@ const updateAppointmentStatus = asyncHandler(async(req,res)=>{
 
     appointment.status = status
     await appointment.save()
-    
-    const appointmentDoc = await Appointment.aggregate([
-        {
-            $match:{
-                _id:new mongoose.Types.ObjectId(appointment?._id)
-            }
-        },
-        {
-            $lookup:{
-                from:"clients",
-                localField:"client",
-                foreignField:"_id",
-                as:"client_details",
-                pipeline:[
-                    {
-                        $project:{
-                            fullName:1,
-                            username:1,
-                            address:1,
-                            phone:1,
-                            profilePhoto:1
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            $addFields:{
-                client_details:{
-                    $first:"$client_details"
-                }
-            }
-        },
-        {
-            $project:{
-                isDeleted:0
-            }
-        }
-    ])
 
-    if(!appointmentDoc){
+    const appointmentobj =  await Appointment.findById(appointment._id)
+    .populate({path:'professional',select:'fullName username email phone address profilePhoto'})
+    .select("-isDeleted -updatedAt -createdAt")
+    
+    if(!appointmentobj){
         throw new ApiError(500,"something went wrong")
     }
 
     return res
     .status(200)
-    .json(new ApiResponse(200,appointmentDoc[0],"updated status successfully"))
+    .json(new ApiResponse(200,appointmentobj,"updated status successfully"))
 })
 
 const cancelAppointment = asyncHandler(async(req,res)=>{
-    const {appointmentId} = req.body
+    const {id} = req.params
 
-    if(!(appointmentId && isValidObjectId(appointmentId))){
+    if(!(id && isValidObjectId(id))){
         throw new ApiError(400,"invalid request to cancel appointment")
     }
 
-    const appointment = await Appointment.findOne({_id:appointmentId})
+    const appointment = await Appointment.findOne({_id:id})
 
     if(!appointment){
         throw new ApiError(404,"appointment not found")
@@ -170,50 +98,82 @@ const cancelAppointment = asyncHandler(async(req,res)=>{
     appointment.status = "cancelled"
     await appointment.save()
 
-    const appointmentDoc = await Appointment.aggregate([
-        {
-            $match:{
-                _id:new mongoose.Types.ObjectId(appointment?._id)
-            }
-        },
-        {
-            $lookup:{
-                from:"professionals",
-                localField:"professional",
-                foreignField:"_id",
-                as:"professional_details",
-                pipeline:[
-                    {
-                        $project:{
-                            fullName:1,
-                            username:1,
-                            phone:1,
-                            profilePhoto:1
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            $addFields:{
-                professional_details:{
-                    $first:"$professional_details"
-                }
-            }
-        },
-        {
-            $project:{
-                isDeleted:0
-            }
-        }
-    ])
     return res
     .status(200)
-    .json(new ApiResponse(200,appointmentDoc[0],"appointment cancelled successfully"))
+    .json(new ApiResponse(203,{},"appointment cancelled successfully"))
+})
+
+const getAll = asyncHandler(async(req,res)=>{
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page-1)*limit;
+        const status = req.query.status || 'pending';
+        
+        const appointments = await Appointment.find({
+            status:status,
+            $or:[
+                {client:req?.client?._id},
+                {professional:req?.prof?._id}
+            ]
+        }).populate({path:'professional',select:'fullName username email phone address profilePhoto'})
+        .select("-isDeleted -updatedAt -createdAt")
+        .skip(skip)
+        .limit(limit)
+
+        return res
+        .status(200)
+        .json(new ApiResponse(200,appointments,"appointments fetched successfully"))
+})
+
+const getOne = asyncHandler(async(req,res)=>{
+    const {id} = req.params
+
+    if(!id  || !isValidObjectId(id)){
+        throw new ApiError(400,"Invalid Appointment Id")
+    }
+
+    const appointment = await Appointment.findById(id)
+    .populate({path:'professional',select:'fullName username email phone address profilePhoto'})
+    .select("-isDeleted -updatedAt -createdAt");
+
+    if(!appointment){
+        throw new ApiError(404, "Appointment not found")
+    }
+
+    return res.status(200)
+            .json(new ApiResponse(200,appointment,"appointment fetched successfully"))
+
+})
+
+const deleteAppointment = asyncHandler(async(req,res)=>{
+    const {id} = req.params;
+
+    if(!(id && isValidObjectId(id))){
+        throw new ApiError(400,"invalid request to delete appointment")
+    }
+
+    const appointment = await Appointment.findOne({
+        _id:id,
+        $or:[
+            {client:req?.client?._id},
+            {professional:req?.prof?._id}
+        ]
+    })
+
+    if(!appointment){
+        throw new ApiError(404,"appointment not found")
+    }
+
+    if(req.client)appointment.isDeleted.client = true;
+    else if(req.prof)appointment.isDeleted.prof = true;
+
+    await appointment.save()
+
+    return res
+    .status(203)
+    .json(new ApiResponse(203,{},"appointment deleted successfully"));
+    
 })
 
 
-
-
-
-export {createAppointment,updateAppointmentStatus,cancelAppointment}
+export {createAppointment,updateAppointmentStatus,cancelAppointment,getAll,getOne,deleteAppointment}

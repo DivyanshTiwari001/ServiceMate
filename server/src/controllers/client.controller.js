@@ -4,8 +4,6 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/ApiError.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
-import { Appointment } from "../models/appointment.model.js";
-
 
 const registerClient = asyncHandler(async(req,res)=>{
     // 1.get user credentials from body
@@ -107,6 +105,11 @@ const changePassword = asyncHandler(async(req,res)=>{
     // 3.get new password 
     // 4.update password
     const {oldPassword,newPassword} = req.body
+    const {id} = req.params
+
+    if(!id || !isValidObjectId(id) || req.client?._id.toString()!==id){
+        throw new ApiError(400,"Unauthorized request")
+    }
 
     if(!(oldPassword || newPassword)){
         throw new ApiError(400,"Both fields are required")
@@ -130,6 +133,12 @@ const changePassword = asyncHandler(async(req,res)=>{
 
 const updateClientDetails = asyncHandler(async(req,res)=>{
     let {email,address,phone} = req.body
+    const {id} = req.params
+
+    if(!id || !isValidObjectId(id) || req.client?._id.toString() !== id ){
+
+        throw new ApiError(400,"Unauthorized request")
+    }
 
     const profilePhotoLocalPath = req.file?.path
 
@@ -165,113 +174,40 @@ const updateClientDetails = asyncHandler(async(req,res)=>{
     .json(new ApiResponse(200,updatedClient,"Account details updated successfully"))
 })
 
-const getAppointments = asyncHandler(async(req,res)=>{
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
-        const skip = (page-1)*limit;
-        const status = req.query.status || 'pending';
+const self = asyncHandler(async (req,res)=>{
+    const id = req?.client?._id;
 
-        const client = await Client.aggregate([
-            {
-                $match:{
-                    _id:new mongoose.Types.ObjectId(req.client?._id)
-                }
-            },
-            {
-                $lookup:{
-                    from:"appointments",
-                    localField:"_id",
-                    foreignField:"client",
-                    as:"appointments",
-                    pipeline:[
-                        {
-                            $match:{
-                                status,
-                                'isDeleted.client':false
-                            }
-                        },
-                        {$skip:skip},
-                        {$limit:limit},
-                        {
-                            $lookup:{
-                                from:"professionals",
-                                localField:"professional",
-                                foreignField:"_id",
-                                as:"professional_details",
-                                pipeline:[
-                                    {
-                                        $project:{
-                                            fullName:1,
-                                            username:1,
-                                            phone:1,
-                                            profilePhoto:1,
-                                            field:1
-                                        }
-                                    }
-                                ]
-
-                            }
-                        },
-                        {
-                            $addFields:{
-                                professional_details:{
-                                    $first:"$professional_details"
-                                }
-                            }
-                        },
-                        {
-                            $project:{
-                                isDeleted:0
-                            }
-                        }
-                    ]
-                }
-            }
-        ])
-        return res
-        .status(200)
-        .json(new ApiResponse(200,client[0].appointments,"appointments fetched successfully"))
-})
-
-const deleteAppointment = asyncHandler(async(req,res)=>{
-    const {appointmentId} = req.query;
-
-    if(!(appointmentId && isValidObjectId(appointmentId))){
-        throw new ApiError(400,"invalid request to cancel appointment")
-    }
-
-    const appointment = await Appointment.findOne({_id:appointmentId})
-
-    if(!appointment){
-        throw new ApiError(404,"appointment not found")
-    }
-
-    appointment.isDeleted.client = true;
-
-    await appointment.save()
-
-    return res
-    .status(200)
-    .json(new ApiResponse(200,{},"appointment deleted successfully"));
-    
-})
-
-const getClientInfo = asyncHandler(async(req,res)=>{
-    const clientId = req.client?._id;
-    if(!clientId){
+    if(!id || !isValidObjectId(id)){
         throw new ApiError(400,"invalid request")
     }
-    const client = await Client.findById(clientId).select("-password");
+
+    const client = await Client.findById(id).select("-password");
+    if(!client){
+        throw new ApiError(404,'user not found')
+    }
+    const modifiedClient = {...client._doc,isProf:false}
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,modifiedClient,"client found successfully")
+    )
+})
+
+const one = asyncHandler(async(req,res)=>{
+    const {id} = req.params
+    if(!id || !isValidObjectId(id)){
+        throw new ApiError(400,"invalid request")
+    }
+    const client = await Client.findById(id).select("-password");
     if(!client){
         throw new ApiError(404,'user not found')
     }
     
-    const modified_client  = {...client._doc,isprof:false}
     return res
     .status(200)
     .json(
-        new ApiResponse(200,modified_client,"client found successfully")
+        new ApiResponse(200,client,"client found successfully")
     )
 })
 
-export {registerClient,loginClient,logoutClient,changePassword,updateClientDetails,getAppointments,deleteAppointment,getClientInfo}
+export {registerClient,loginClient,logoutClient,changePassword,updateClientDetails,one,self}

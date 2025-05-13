@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseUrl = "http://localhost:8000/api/v1/clients"
+const baseUrl = "http://localhost:8000/api/v1/client"
 
 const signupClient = async ({ username, fullName, email, password, phone, address }, profilePhoto) => {
   const form = new FormData();
@@ -12,7 +12,7 @@ const signupClient = async ({ username, fullName, email, password, phone, addres
   form.append('address', address);
 
 
-  const url = baseUrl + '/register'
+  const url = baseUrl
 
   const res = await axios.post(url, form, { withCredentials: true })
 
@@ -37,7 +37,7 @@ const loginClient = async (password, username = "", email = "",) => {
 }
 
 const getClientInfo = async () => {
-  const url = baseUrl + '/get-client'
+  const url = baseUrl + '/self'
   const res = await axios.get(url, { withCredentials: true })
   return res.data;
 }
@@ -51,7 +51,7 @@ const changePassword = async (oldPassword, newPassword) => {
 }
 
 const getClientAppointments = async (page, limit, status) => {
-  const url = baseUrl + '/get-appointments'
+  const url = 'http://localhost:8000/api/v1/appointment'
   const res = await axios.get(url, {
     params: {
       page, 
@@ -62,15 +62,14 @@ const getClientAppointments = async (page, limit, status) => {
   return res.data;
 }
 
-const deleteAppointment = async (appointmentId)=>{
-  const url = baseUrl + '/delete-appointment';
-  const res = await axios.delete(url,{params:{appointmentId},withCredentials:true})
-  console.log(res.data);
-}
 
 const logoutClient = async () => {
   const url = baseUrl + '/logout'
-  const res = await axios.get(url,{withCredentials:true})
+  const res = await axios.post(url,{},{withCredentials:true})
+}
+
+const deleteAppointment = async()=>{
+
 }
 
 export {
@@ -78,8 +77,8 @@ export {
   loginClient,
   getClientInfo,
   getClientAppointments,
-  deleteAppointment,
   updateClientDetails,
+  deleteAppointment,
   changePassword,
   logoutClient,
 }

@@ -10,7 +10,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Professional } from "../models/professional.model.js";
-import { Appointment } from "../models/appointment.model.js";
 
 
 const registerProf = asyncHandler(async(req,res)=>{
@@ -38,7 +37,7 @@ const registerProf = asyncHandler(async(req,res)=>{
         }
     )
 
-    const createdUser = await Professional.findById(professional?._id).select("-password")
+    const createdUser = await Professional.findById(professional?._id).select("-password -createdAt -updatedAt")
 
     if(!createdUser){
         throw new ApiError(500,"User not created");
@@ -156,7 +155,7 @@ const updateProfDetails = asyncHandler(async(req,res)=>{
         {
             new: true
         }
-    ).select("-password")
+    ).select("-password -createdAt -updatedAt")
 
     if(!updatedProf){
         throw new ApiError(400,"Something went wrong")
@@ -169,110 +168,13 @@ const updateProfDetails = asyncHandler(async(req,res)=>{
     )
 })
 
-const getAppointments = asyncHandler(async(req,res)=>{
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
-    const skip = (page-1)*limit;
-    const statusKey = req.query.status || 0;
 
-    const statusList = ["accepted","rejected","pending","completed","cancelled"]
-    const status = statusList[statusKey]
-    
-    const result = await Professional.aggregate([
-        {
-            $match:{
-                _id:new mongoose.Types.ObjectId(req.prof?._id)
-            }
-        },
-        {
-            $limit:limit
-        },
-        {
-            $skip:skip
-        },
-        {
-            $lookup:{
-                from:"appointments",
-                localField:"_id",
-                foreignField:"professional",
-                as:"appointments",
-                pipeline:[
-                    {
-                        $match:{
-                            status
-                        }
-                    },
-                    {
-                        $lookup:{
-                            from:"clients",
-                            localField:"client",
-                            foreignField:"_id",
-                            as:"client_details",
-                            pipeline:[
-                                {
-                                    $project:{
-                                        fullName:1,
-                                        username:1,
-                                        profilePhoto:1,
-                                        address:1,
-                                        phone:1
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $addFields:{
-                            client_details:{
-                                $first:"$client_details"
-                            }
-                        }
-                    }
-                ]
-            },
-        },
-    ])
-
-    if(!result){
-        throw new ApiError(400,"Unable to fetch request at this moment")
-    }
-    console.log(result[0].appointments)
-    return res
-    .status(200)
-    .json(
-        new ApiResponse(200,result[0].appointments,"appointments fetched successfully")
-    )
-})
-
-const deleteAppointment = asyncHandler(async(req,res)=>{
-    const {appointmentId} = req.query;
-
-    if(!(appointmentId && isValidObjectId(appointmentId))){
-        throw new ApiError(400,"invalid request to cancel appointment")
-    }
-
-    const appointment = await Appointment.findOne({_id:appointmentId})
-
-    if(!appointment){
-        throw new ApiError(404,"appointment not found")
-    }
-
-    appointment.isDeleted.prof = true;
-
-    await appointment.save()
-
-    return res
-    .status(200)
-    .json(new ApiResponse(200,{},"appointment deleted successfully"));
-    
-})
-
-const getProfessionalInfo = asyncHandler(async(req,res)=>{
+const self = asyncHandler(async(req,res)=>{
     const profId = req.prof?._id;
     if(!profId){
         throw new ApiError(400,"invalid request")
     }
-    const prof = await Professional.findById(profId).select("-password");
+    const prof = await Professional.findById(profId).select("-password -createdAt -updatedAt");
 
     if(!prof){
         throw new ApiError(404,'user not found')
@@ -284,6 +186,23 @@ const getProfessionalInfo = asyncHandler(async(req,res)=>{
     .status(200)
     .json(
         new ApiResponse(200,modified_prof,"user found successfully")
+    )
+})
+const one = asyncHandler(async(req,res)=>{
+    const {id} = req.params;
+    if(!id || !isValidObjectId(id)){
+        throw new ApiError(400,"invalid request")
+    }
+    const prof = await Professional.findById(id).select("-password -createdAt -updatedAt");
+
+    if(!prof){
+        throw new ApiError(404,'user not found')
+    }
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,prof,"user found successfully")
     )
 })
 
@@ -306,7 +225,12 @@ const getAllProfessional = asyncHandler(async(req,res)=>{
         {$skip : skip},
         {
             $project:{
-                password:0
+                _id:1,
+                fullName:1,
+                address:1,
+                profilePhoto:1,
+                field:1,
+                experience:1
             }
         }
     )
@@ -319,4 +243,4 @@ const getAllProfessional = asyncHandler(async(req,res)=>{
 
 }) 
 
-export {registerProf,loginProf,logoutProf,changePassword,updateProfDetails,getAppointments,deleteAppointment,getProfessionalInfo,getAllProfessional}
+export {registerProf,loginProf,logoutProf,changePassword,updateProfDetails,self,one,getAllProfessional}
