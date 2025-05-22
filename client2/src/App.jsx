@@ -11,6 +11,9 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Footer from './Components/Footer';
 import { BookingPage } from './pages/BookingPage';
+import ServiceSearch from './pages/ServiceSearch';
+import ScrollToTop from './Components/ScrollToTop';
+import AppointmentsPage from './pages/AppointmentsPage';
 
 function App() {
   useEffect(() => {
@@ -20,6 +23,7 @@ function App() {
   return (
     <div className="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
       <Router>
+        <ScrollToTop/>
         <Navbar />
         <div className="flex-grow mt-4 px-4">
           <Routes>
@@ -30,6 +34,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/book/:id" element={<BookingPage />} />
+            <Route path="/search/:service" element={<ServiceSearch/>} />
+            <Route path="/appointment" element={<AppointmentsPage/>} />
           </Routes>
         </div>
         <Footer />

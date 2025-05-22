@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate()
   return (
     <div
       className="hero min-h-screen bg-cover bg-center relative"
@@ -38,10 +40,16 @@ const Hero = () => {
             fast, reliable, and hassle-free!
           </p>
           <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-            <button className="btn bg-red-600 text-white hover:bg-red-700 transition-all">
+            <button className="btn bg-red-600 text-white hover:bg-red-700 transition-all"
+            onClick={()=>{
+              navigate("/search/plumber")
+            }}>
               Book a Service
             </button>
-            <button className="btn btn-outline text-white border-white hover:bg-white hover:text-red-600 transition-all">
+            <button className="btn btn-outline text-white border-white hover:bg-white hover:text-red-600 transition-all"
+            onClick={()=>{
+              navigate("/about")
+            }}>
               Learn More
             </button>
           </div>

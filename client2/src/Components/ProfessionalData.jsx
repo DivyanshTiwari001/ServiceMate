@@ -1,11 +1,42 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import ProfessionalCard from '../Components/ProfessionalCard';
 
-const services = {
-  Plumber: [
-    {
+export const professionals = [
+  {
+    _id:1,
+    fullName: 'master',
+    phone: '4545454545',
+    field: 'plumber',
+    address: 'somewhere in Delhi',
+    rating: 5,
+    profilePhoto : 'https://i.imgur.com/1bX5QH6.png',
+  },
+  {
+    _id:2,
+    fullName: 'dummy1',
+    phone: '7897897897',
+    field: 'painter',
+    address: '1-123 pivot street, Porbandar',
+    rating: 5,
+    profilePhoto: 'https://i.pravatar.cc/150?img=3',
+  },
+  {
+    _id:3,
+    fullName: 'dummy2',
+    phone: '7897897897',
+    field: 'painter',
+    address: '1-123 pivot street, Porbandar',
+    rating: 5,
+    profilePhoto: 'https://i.pravatar.cc/150?img=4',
+  },
+  {
+    _id:4,
+    fullName: 'dummy3',
+    phone: '9999999999',
+    field: 'electrician',
+    address: 'Gandhinagar, Gujarat',
+    rating: 4,
+    profilePhoto: 'https://i.pravatar.cc/150?img=5',
+  },
+   {
       _id:5,
       fullName: 'Ramesh Plumber',
       phone: '9876543210',
@@ -41,8 +72,6 @@ const services = {
       rating: 4,
       profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=11',
     },
-  ],
-  Electrician: [
     {
       _id:9,
       fullName: 'Vikas Electrician',
@@ -79,8 +108,7 @@ const services = {
       rating: 4,
       profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=7',
     },
-  ],
-  Cleaner: [
+  
     {
       _id:13,
       fullName: 'Deep Clean Pro',
@@ -117,8 +145,6 @@ const services = {
       rating: 5,
       profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=9',
     },
-  ],
-  'Body Massage': [
     {
       _id:17,
       fullName: 'Relax Spa',
@@ -155,44 +181,76 @@ const services = {
       rating: 4,
       profilePhoto: 'https://i.pravatar.cc/150?img=13',
     },
-  ],
-};
-
-const Service = () => {
-
-  const navigate = useNavigate();
-    const handleServiceSearch = (service)=>{
-      navigate(`/search/${service.toLowerCase()}`)
-    }
-    
-
-  return (
-    <section className="my-12 px-4 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold text-center text-red-500 mb-10">
-        Explore Our Home Services
-      </h1>
-
-      {Object.entries(services).map(([category, providers], sectionIndex) => (
-        <div key={sectionIndex} className="mb-16">
-          <h2 className="text-2xl font-semibold text-pink-400 mb-6 cursor-pointer"
-          onClick={()=>handleServiceSearch(category)}>{category}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {providers.map((pro, index) => (
-              <ProfessionalCard index={index} pro={pro}/>
-            ))}
-          </div>
-        </div>
-      ))}
-
-      <div className="text-center mt-12">
-                  <Link to={`/search/plumber`}>
-                    <button className= "btn btn-wide btn-error text-white text-lg shadow-lg hover:scale-105 transition duration-300">
-                      View More Services
-                    </button>
-                  </Link>
-          </div>
-    </section>
-  );
-};
-
-export default Service;
+    {
+      _id:21,
+      fullName: 'Ramesh Plumber',
+      phone: '9876543210',
+      field: 'Plumber',
+      address: 'Sector 10, Noida',
+      rating: 5,
+      profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=10',
+    },
+    {
+      _id:22,
+      fullName: 'Ramesh Plumber',
+      phone: '9876543210',
+      field: 'Plumber',
+      address: 'Sector 10, Noida',
+      rating: 5,
+      profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=10',
+    },
+    {
+      _id:23,
+      fullName: 'Ramesh Plumber',
+      phone: '9876543210',
+      field: 'Plumber',
+      address: 'Sector 10, Noida',
+      rating: 5,
+      profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=10',
+    },
+    {
+      _id:24,
+      fullName: 'Ramesh Plumber',
+      phone: '9876543210',
+      field: 'Plumber',
+      address: 'Sector 10, Noida',
+      rating: 5,
+      profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=10',
+    },
+    {
+      _id:25,
+      fullName: 'Ramesh Plumber',
+      phone: '9876543210',
+      field: 'Plumber',
+      address: 'Sector 10, Noida',
+      rating: 5,
+      profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=10',
+    },
+    {
+      _id:26,
+      fullName: 'Ramesh Plumber',
+      phone: '9876543210',
+      field: 'Plumber',
+      address: 'Sector 10, Noida',
+      rating: 5,
+      profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=10',
+    },
+    {
+      _id:27,
+      fullName: 'Ramesh Plumber',
+      phone: '9876543210',
+      field: 'Plumber',
+      address: 'Sector 10, Noida',
+      rating: 5,
+      profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=10',
+    },
+    {
+      _id:28,
+      fullName: 'Ramesh Plumber',
+      phone: '9876543210',
+      field: 'Plumber',
+      address: 'Sector 10, Noida',
+      rating: 5,
+      profilePhoto: 'https://i.pravatar.cc/150?profilePhoto=10',
+    },
+];

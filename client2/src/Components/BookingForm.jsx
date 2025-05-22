@@ -50,11 +50,11 @@ const BookingForm = ({ professional }) => {
           <div className="flex flex-col items-center p-6 border border-[#1f2937] rounded-lg bg-[#1f2937]">
             <img 
               src={prof.profilePhoto} 
-              alt={prof.name}
+              alt={prof.fullName}
               className="w-40 h-40 rounded-full object-cover border-4 border-blue-600 mb-4"
             />
             
-            <h3 className="text-2xl font-bold text-white">{prof.name}</h3>
+            <h3 className="text-2xl font-bold text-white">{prof.fullName}</h3>
             <div className="mt-1 px-4 py-1 bg-blue-600 text-white rounded-full text-sm font-medium">
               {prof.field}
             </div>
